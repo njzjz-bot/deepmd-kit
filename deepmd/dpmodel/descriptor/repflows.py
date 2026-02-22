@@ -63,6 +63,35 @@ class DescrptBlockRepflows(NativeOP, DescriptorBlock):
     r"""
     The repflow descriptor block.
 
+    The repflow block iteratively updates node (:math:`\mathcal{N}`), edge (:math:`\mathcal{E}`),
+    and angle (:math:`\mathcal{A}`) representations through message passing:
+
+    **Node Update:**
+
+    .. math::
+        \mathcal{N}^{i,l+1} = \mathrm{UpdateNode}(\mathcal{N}^{i,l}, \mathcal{E}^{i,l}, \mathcal{A}^{i,l}),
+
+    which aggregates messages from edges and angles to update the node representation.
+
+    **Edge Update:**
+
+    .. math::
+        \mathcal{E}^{i,l+1} = \mathrm{UpdateEdge}(\mathcal{N}^{i,l}, \mathcal{E}^{i,l}, \mathcal{A}^{i,l}),
+
+    which updates edge representations based on node and angle information.
+
+    **Angle Update (optional):**
+
+    .. math::
+        \mathcal{A}^{i,l+1} = \mathrm{UpdateAngle}(\mathcal{N}^{i,l}, \mathcal{E}^{i,l}, \mathcal{A}^{i,l}).
+
+    The symmetrization operation produces the final descriptor:
+
+    .. math::
+        \mathcal{D}^i = \frac{1}{N_c^2} (\mathcal{N}^i)^T \mathcal{E}^i (\mathcal{E}^i)^T \mathcal{N}^i_<,
+
+    where :math:`\mathcal{N}^i_<` denotes the first `axis_neuron` columns of :math:`\mathcal{N}^i`.
+
     Parameters
     ----------
     n_dim : int, optional

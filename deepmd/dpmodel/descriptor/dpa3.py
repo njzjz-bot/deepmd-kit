@@ -254,6 +254,31 @@ class RepFlowArgs:
 class DescrptDPA3(NativeOP, BaseDescriptor):
     r"""The DPA3 descriptor[1]_.
 
+    The DPA-3 descriptor uses a repflow block to iteratively update node, edge, and angle
+    representations. The descriptor is computed as:
+
+    .. math::
+        \mathcal{D}^i = \mathrm{RepFlow}(\mathcal{N}^i, \mathcal{E}^i, \mathcal{A}^i),
+
+    where :math:`\mathcal{N}^i`, :math:`\mathcal{E}^i`, and :math:`\mathcal{A}^i` are the
+    initial node, edge, and angle representations respectively.
+
+    The repflow block performs iterative updates through multiple layers:
+
+    .. math::
+        \mathcal{N}^{i,l+1} = \mathrm{UpdateNode}(\mathcal{N}^{i,l}, \mathcal{E}^{i,l}, \mathcal{A}^{i,l}),
+
+    .. math::
+        \mathcal{E}^{i,l+1} = \mathrm{UpdateEdge}(\mathcal{N}^{i,l}, \mathcal{E}^{i,l}, \mathcal{A}^{i,l}),
+
+    .. math::
+        \mathcal{A}^{i,l+1} = \mathrm{UpdateAngle}(\mathcal{N}^{i,l}, \mathcal{E}^{i,l}, \mathcal{A}^{i,l}).
+
+    The final descriptor output dimension is:
+
+    .. math::
+        \dim(\mathcal{D}^i) = \text{n\_dim} \times \text{axis\_neuron} \quad (\text{after symmetrization}).
+
     Parameters
     ----------
     repflow : Union[RepFlowArgs, dict]

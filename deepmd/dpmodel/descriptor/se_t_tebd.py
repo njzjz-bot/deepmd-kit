@@ -70,6 +70,27 @@ from .descriptor import (
 class DescrptSeTTebd(NativeOP, BaseDescriptor):
     r"""Construct an embedding net that takes angles between two neighboring atoms and type embeddings as input.
 
+    The descriptor :math:`\mathcal{D}^i \in \mathbb{R}^{M}` is given by
+
+    .. math::
+        \mathcal{D}^i = \frac{1}{N_c^2} \sum_{j,k} \mathcal{N}(\cos\theta_{jik}, \mathcal{T}_j, \mathcal{T}_k),
+
+    where :math:`\theta_{jik}` is the angle between neighbors :math:`j` and :math:`k`
+    around the central atom :math:`i`, :math:`\mathcal{T}_j` and :math:`\mathcal{T}_k`
+    are the type embeddings of atoms :math:`j` and :math:`k`, and :math:`\mathcal{N}`
+    is the embedding network.
+
+    The cosine of the angle is computed from the normalized relative coordinates:
+
+    .. math::
+        \cos\theta_{jik} = \frac{\boldsymbol{r}_{ij} \cdot \boldsymbol{r}_{ik}}{|\boldsymbol{r}_{ij}| |\boldsymbol{r}_{ik}|}.
+
+    The type embedding can be incorporated in two modes:
+
+    - "concat": Concatenate :math:`[\cos\theta_{jik}, \mathcal{T}_j, \mathcal{T}_k]` as input to the embedding network.
+    - "strip": Use separate embedding networks for :math:`\cos\theta_{jik}` and :math:`[\mathcal{T}_j, \mathcal{T}_k]`,
+      then combine their outputs multiplicatively.
+
     Parameters
     ----------
     rcut
