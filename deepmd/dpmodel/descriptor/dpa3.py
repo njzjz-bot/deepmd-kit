@@ -59,6 +59,27 @@ from .repflows import (
 class RepFlowArgs:
     r"""The constructor for the RepFlowArgs class which defines the parameters of the repflow block in DPA3 descriptor.
 
+    The DPA-3 descriptor uses a repflow architecture that maintains and updates three types
+    of representations: node (:math:`\mathbf{n}`), edge (:math:`\mathbf{e}`), and angle (:math:`\mathbf{a}`).
+
+    The update equations for each layer are:
+
+    .. math::
+        \mathbf{n}^{l+1} = \text{UpdateNode}(\mathbf{n}^l, \mathbf{e}^l, \mathbf{a}^l),
+
+    .. math::
+        \mathbf{e}^{l+1} = \text{UpdateEdge}(\mathbf{n}^l, \mathbf{e}^l, \mathbf{a}^l),
+
+    .. math::
+        \mathbf{a}^{l+1} = \text{UpdateAngle}(\mathbf{n}^l, \mathbf{e}^l, \mathbf{a}^l).
+
+    The final descriptor is obtained by symmetrization:
+
+    .. math::
+        \mathcal{D}^i = \text{Symmetrize}(\mathbf{n}^L, \mathbf{e}^L),
+
+    where :math:`L` is the number of repflow layers.
+
     Parameters
     ----------
     n_dim : int, optional

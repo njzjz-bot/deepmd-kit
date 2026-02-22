@@ -463,6 +463,33 @@ class DescrptDPA2(NativeOP, BaseDescriptor):
     ) -> None:
         r"""The DPA-2 descriptor[1]_.
 
+        The DPA-2 descriptor combines a repinit block and a repformer block to generate
+        a comprehensive atomic representation. The overall computation is:
+
+        .. math::
+            \mathcal{D}^i = \text{Repformer}(\text{Repinit}(\mathcal{R}^i, \mathcal{T})),
+
+        where :math:`\mathcal{R}^i` is the environment matrix and :math:`\mathcal{T}` is
+        the type embedding.
+
+        The **repinit block** first computes an initial embedding using attention-based
+        mechanism (see :class:`DescrptDPA1`):
+
+        .. math::
+            \mathcal{G}^i = \text{AttentionEmbedding}(\mathcal{R}^i, \mathcal{T}).
+
+        Optionally, a three-body representation can be concatenated:
+
+        .. math::
+            \mathcal{G}^i \leftarrow [\mathcal{G}^i, \text{ThreeBody}(\mathcal{R}^i, \mathcal{T})].
+
+        The **repformer block** then iteratively updates the representation through
+        multiple layers with the following operations:
+
+        - **Convolution update**: :math:`\mathcal{G}^i \leftarrow \mathcal{G}^i + \text{Conv}(\mathcal{G}^i, \mathcal{R}^i)`
+        - **Self-attention update**: :math:`\mathcal{G}^i \leftarrow \mathcal{G}^i + \text{Attn}(\mathcal{G}^i)`
+        - **Symmetrization**: :math:`\mathcal{D}^i = (\mathcal{G}^i)^T \mathcal{R}^i (\mathcal{R}^i)^T \mathcal{G}^i_<`
+
         Parameters
         ----------
         repinit : Union[RepinitArgs, dict]
