@@ -10,6 +10,14 @@
 
 #include "AtomMap.h"
 #include "device.h"
+
+#ifdef USE_MPI
+#include <mpi.h>
+#ifdef OMPI_MPI_H
+#include <mpi-ext.h>
+#endif
+#endif
+
 #if defined(_WIN32)
 #if defined(_WIN32_WINNT)
 #undef _WIN32_WINNT
@@ -267,6 +275,8 @@ void deepmd::select_real_atoms_sendlist_new(
   sendnum_new.resize(nswap);
   recvnum_new.resize(nswap);
   sendlist_new.clear();
+  sendlist_new.reserve(
+      std::accumulate(inlist.sendnum, inlist.sendnum + nswap, 0));
 
   // select real atoms in sendlist
   for (int s = 0; s < nswap; ++s) {
@@ -282,7 +292,28 @@ void deepmd::select_real_atoms_sendlist_new(
       }
     }
     sendnum_new[s] = cnt;
-    recvnum_new[s] = cnt;
+  }
+
+// MPI synchronization for recvnum_new
+#ifdef USE_MPI
+  if (inlist.world) {
+    MPI_Comm comm = *static_cast<MPI_Comm*>(inlist.world);
+    const int TAG_BASE = 0x7a31;
+    for (int s = 0; s < nswap; ++s) {
+      const int send_to = inlist.sendproc[s];
+      const int recv_from = inlist.recvproc[s];
+      int send_cnt = sendnum_new[s];
+      int recv_cnt = 0;
+      MPI_Sendrecv(&send_cnt, 1, MPI_INT, send_to, TAG_BASE + s, &recv_cnt, 1,
+                   MPI_INT, recv_from, TAG_BASE + s, comm, MPI_STATUS_IGNORE);
+      recvnum_new[s] = recv_cnt;
+    }
+  } else
+#endif
+  {
+    for (int s = 0; s < nswap; ++s) {
+      recvnum_new[s] = sendnum_new[s];
+    }
   }
 }
 
