@@ -31,6 +31,9 @@ if(ENABLE_PADDLE AND NOT BUILD_PY_IF)
                           PUBLIC "${hip_LIB_INSTALL_DIR}/libgalaxyhip.so")
   endif()
 endif()
+if(MPI_FOUND)
+  target_compile_definitions(${libname} PRIVATE USE_MPI)
+endif()
 
 target_include_directories(
   ${libname}
