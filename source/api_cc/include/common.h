@@ -112,13 +112,15 @@ void select_real_atoms_sendlist(const deepmd::InputNlist& inlist,
  * @param[out] sendnum_new The new sendnum.
  * @param[out] recvnum_new The new recvnum.
  * @param[out] sendlist_new The new sendlist (flattened).
+ * @param[out] firstrecv_new The new firstrecv.
  */
 void select_real_atoms_sendlist_new(
     const deepmd::InputNlist& inlist,
     const std::vector<int>& fwd_map,
     std::vector<int>& sendnum_new,
     std::vector<int>& recvnum_new,
-    std::vector<int>& sendlist_new);
+    std::vector<int>& sendlist_new,
+    std::vector<int>& firstrecv_new);
 
 /**
  * @brief Apply the given map to a vector.

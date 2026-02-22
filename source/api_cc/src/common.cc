@@ -271,10 +271,12 @@ void deepmd::select_real_atoms_sendlist_new(
     const std::vector<int>& fwd_map,
     std::vector<int>& sendnum_new,
     std::vector<int>& recvnum_new,
-    std::vector<int>& sendlist_new) {
+    std::vector<int>& sendlist_new,
+    std::vector<int>& firstrecv_new) {
   int nswap = inlist.nswap;
   sendnum_new.resize(nswap);
   recvnum_new.resize(nswap);
+  firstrecv_new.resize(nswap);
   sendlist_new.clear();
   sendlist_new.reserve(
       std::accumulate(inlist.sendnum, inlist.sendnum + nswap, 0));
@@ -315,6 +317,13 @@ void deepmd::select_real_atoms_sendlist_new(
     for (int s = 0; s < nswap; ++s) {
       recvnum_new[s] = sendnum_new[s];
     }
+  }
+
+  // compute firstrecv_new
+  int acc = 0;
+  for (int s = 0; s < nswap; ++s) {
+    firstrecv_new[s] = acc;
+    acc += recvnum_new[s];
   }
 }
 
