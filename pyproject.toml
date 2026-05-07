@@ -132,10 +132,35 @@ cu12 = [
     "nvidia-cuda-nvcc-cu12",
 ]
 jax = [
+    # Backward-compatible alias for CPU JAX.
     # below is a funny workaround for
     # https://github.com/astral-sh/uv/issues/8601
-    'jax>=0.4.33;python_version>="3.10"',
-    'jax>=0.4.33;python_version>="3.10"',
+    'jax[cpu]>=0.4.33;python_version>="3.10"',
+    'jax[cpu]>=0.4.33;python_version>="3.10"',
+    'flax>=0.10.0;python_version>="3.10"',
+    'flax>=0.10.0;python_version>="3.10"',
+    'orbax-checkpoint;python_version>="3.10"',
+    'orbax-checkpoint;python_version>="3.10"',
+    # The pinning of ml_dtypes may conflict with TF
+    # 'jax-ai-stack;python_version>="3.10"',
+]
+jax-cpu = [
+    # below is a funny workaround for
+    # https://github.com/astral-sh/uv/issues/8601
+    'jax[cpu]>=0.4.33;python_version>="3.10"',
+    'jax[cpu]>=0.4.33;python_version>="3.10"',
+    'flax>=0.10.0;python_version>="3.10"',
+    'flax>=0.10.0;python_version>="3.10"',
+    'orbax-checkpoint;python_version>="3.10"',
+    'orbax-checkpoint;python_version>="3.10"',
+    # The pinning of ml_dtypes may conflict with TF
+    # 'jax-ai-stack;python_version>="3.10"',
+]
+jax-gpu = [
+    # below is a funny workaround for
+    # https://github.com/astral-sh/uv/issues/8601
+    'jax[cuda12]>=0.4.33;python_version>="3.10"',
+    'jax[cuda12]>=0.4.33;python_version>="3.10"',
     'flax>=0.10.0;python_version>="3.10"',
     'flax>=0.10.0;python_version>="3.10"',
     'orbax-checkpoint;python_version>="3.10"',
@@ -175,8 +200,11 @@ pin_pytorch_cpu = [
 pin_pytorch_gpu = [
   "torch==2.10.0",
 ]
-pin_jax = [
-  "jax==0.5.0;python_version>='3.10'",
+pin_jax_cpu = [
+  "jax[cpu]==0.5.0;python_version>='3.10'",
+]
+pin_jax_gpu = [
+  "jax[cuda12]==0.5.0;python_version>='3.10'",
 ]
 
 [tool.setuptools_scm]
